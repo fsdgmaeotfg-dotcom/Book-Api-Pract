@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CategoryBase(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=255)
 
 
 class CategoryCreate(CategoryBase):
@@ -21,11 +21,11 @@ class CategoryResponse(CategoryBase):
 
 
 class BookBase(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=255)
     description: str | None = None
-    price: float
+    price: float = Field(ge=0)
     category_id: int
-    url: str | None = None
+    url: str | None = Field(default=None, max_length=1024)
 
 
 class BookCreate(BookBase):
@@ -33,11 +33,11 @@ class BookCreate(BookBase):
 
 
 class BookUpdate(BaseModel):
-    title: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = None
-    price: float | None = None
+    price: float | None = Field(default=None, ge=0)
     category_id: int | None = None
-    url: str | None = None
+    url: str | None = Field(default=None, max_length=1024)
 
 
 class BookResponse(BookBase):

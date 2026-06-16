@@ -27,12 +27,19 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     """Создать новую категорию"""
+    if crud.get_category_by_title(db, category.title):
+        raise HTTPException(status_code=409, detail="Category already exists")
+
     return crud.create_category(db, title=category.title)
 
 
 @router.put("/{category_id}", response_model=CategoryResponse)
 def update_category(category_id: int, category: CategoryUpdate, db: Session = Depends(get_db)):
     """Обновить категорию по ID"""
+    existing = crud.get_category_by_title(db, category.title)
+    if existing and existing.id != category_id:
+        raise HTTPException(status_code=409, detail="Category already exists")
+
     updated = crud.update_category(db, category_id, title=category.title)
     if not updated:
         raise HTTPException(status_code=404, detail="Category not found")

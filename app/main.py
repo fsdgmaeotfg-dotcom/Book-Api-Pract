@@ -1,6 +1,16 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from app.api import categories, books
+
+from app.api import books, categories
 from app.db.db import init_db
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
 
 app = FastAPI(
     title="Books API",
@@ -8,10 +18,9 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
+    lifespan=lifespan,
 )
-
-init_db()
 
 app.include_router(categories.router)
 app.include_router(books.router)
@@ -27,4 +36,3 @@ def read_root():
 def health_check():
     """Проверка здоровья сервиса"""
     return {"status": "healthy", "service": "Books API"}
-
