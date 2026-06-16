@@ -56,4 +56,4 @@ SELECT * FROM categories;
 SELECT * FROM books;
 ```
 
-Скриншоты для сдачи находятся в папке `examples/`.
+
